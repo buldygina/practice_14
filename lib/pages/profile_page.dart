@@ -1,24 +1,47 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:practice_8/pages/edit_phone.dart';
-import 'package:practice_8/pages/edit_name.dart';
-import 'package:practice_8/pages/edit_image.dart';
-import 'package:practice_8/pages/edit_email.dart';
-import 'package:practice_8/widgets/dispaly_image_widget.dart';
+import 'package:practice_10/authentication/auth_service.dart';
+import 'package:practice_10/pages/edit_phone.dart';
+import 'package:practice_10/pages/edit_name.dart';
+import 'package:practice_10/pages/edit_image.dart';
+import 'package:practice_10/pages/edit_email.dart';
+import 'package:practice_10/widgets/dispaly_image_widget.dart';
 import '../user/user_data.dart';
+import 'package:practice_10/pages/login_page.dart';
 
-// This class handles the Page to display the user's info on the "Edit Profile" Screen
+
 class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final authService = AuthService();
+
+  void logout() async {
+    await authService.signOut();
+    if (mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+            (route) => false,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = UserData.myUser;
 
     return Scaffold(
+      appBar: AppBar(
+      actions: [
+        IconButton(
+          onPressed: logout,
+          icon: const Icon(Icons.logout),
+        )
+      ],
+      ),
       body: Column(
         children: [
           AppBar(
@@ -53,7 +76,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Widget builds the display item with the proper formatting to display the user's info
   Widget buildUserInfoDisplay(String getValue, String title, Widget editPage) =>
       Padding(
           padding: EdgeInsets.only(bottom: 10),
@@ -99,14 +121,13 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ));
 
-  // Refrshes the Page after updating user info.
+
   FutureOr onGoBack(dynamic value) {
     setState(() {});
   }
-
-  // Handles navigation and prompts refresh.
   void navigateSecondPage(Widget editForm) {
     Route route = MaterialPageRoute(builder: (context) => editForm);
     Navigator.push(context, route).then(onGoBack);
   }
 }
+

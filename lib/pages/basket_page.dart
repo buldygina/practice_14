@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:practice_8/model/cart_item.dart';
+import 'package:practice_10/model/cart_item.dart';
 
 class BasketPage extends StatefulWidget {
   final List<CartItem> cart;

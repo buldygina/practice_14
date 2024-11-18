@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:practice_8/model/coffee.dart';
+import 'package:practice_10/model/coffee.dart';
 
 class ApiService {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'http://192.168.1.11:8080',
+      baseUrl: 'http://192.168.1.38:8080',
       connectTimeout: Duration(seconds: 50),
       receiveTimeout: Duration(seconds: 50),
     ),
@@ -12,7 +12,7 @@ class ApiService {
 
   Future<List<Coffee>> getCoffees() async {
     try {
-      final response = await _dio.get('http://192.168.1.11:8080/coffees');
+      final response = await _dio.get('http://192.168.1.38:8080/coffees');
       if (response.statusCode == 200) {
         List<Coffee> coffee = (response.data as List)
             .map((coffee) => Coffee.fromJson(coffee))
@@ -28,7 +28,7 @@ class ApiService {
   Future<Coffee> createCoffee(Coffee coffee) async {
     try {
       final response = await _dio.post(
-        'http://192.168.1.11:8080/coffee/create',
+        'http://192.168.1.38:8080/coffee/create',
         data: coffee.toJson(),
       );
       if (response.statusCode == 200) {
@@ -42,7 +42,7 @@ class ApiService {
   }
   Future<Coffee> getCoffeeById(int id) async {
     try {
-      final response = await _dio.get('http://192.168.1.11:8080/coffee/$id');
+      final response = await _dio.get('http://192.168.1.38:8080/coffee/$id');
       if (response.statusCode == 200) {
         return Coffee.fromJson(response.data);
       } else {
@@ -55,7 +55,7 @@ class ApiService {
   Future<Coffee> updateCoffee(int id, Coffee coffee) async {
     try {
       final response = await _dio.put(
-        'http://192.168.1.11:8080/coffee/update/$id',
+        'http://192.168.1.38:8080/coffee/update/$id',
         data: coffee.toJson(),
       );
       if (response.statusCode == 200) {
@@ -69,7 +69,7 @@ class ApiService {
   }
   Future<void> deleteCoffee(int id) async {
     try {
-      final response = await _dio.delete('http://192.168.1.11:8080/Coffee/delete/$id');
+      final response = await _dio.delete('http://192.168.1.38:8080/Coffee/delete/$id');
       if (response.statusCode == 204) {
         print("Coffee with ID $id deleted successfully.");
       } else {

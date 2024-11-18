@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:practice_8/pages/profile_page.dart';
+import 'package:practice_10/pages/profile_page.dart';
 import 'package:flutter/services.dart';
 
 void main() {

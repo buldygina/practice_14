@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:string_validator/string_validator.dart';
-import 'package:practice_8/user/user_data.dart';
-import 'package:practice_8/widgets/appbar.dart';
+import 'package:practice_10/user/user_data.dart';
+import 'package:practice_10/widgets/appbar.dart';
 
 class EditNameFormPage extends StatefulWidget {
   const EditNameFormPage({Key? key}) : super(key: key);

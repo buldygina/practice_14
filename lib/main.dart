@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:practice_8/model/coffee.dart';
-import 'package:practice_8/pages/home_page.dart';
-import 'package:practice_8/pages/second_page.dart';
-import 'package:practice_8/pages/third_page.dart';
+import 'package:practice_10/model/coffee.dart';
+import 'package:practice_10/pages/home_page.dart';
+import 'package:practice_10/pages/second_page.dart';
+import 'package:practice_10/pages/third_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+void main() async{
+  await Supabase.initialize(
+    url: "https://rwonqkhzbjwsbxrronhr.supabase.co",
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3b25xa2h6Ymp3c2J4cnJvbmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE4NjY5MDAsImV4cCI6MjA0NzQ0MjkwMH0.xxUTUBaLnWAD7Fz9R2VQuSkfxL_YyoUDPQ6WNfEeLgQ",
+  );
   runApp(const MyApp());
 }
 
