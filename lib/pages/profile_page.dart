@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:practice_10/authentication/auth_service.dart';
-import 'package:practice_10/pages/edit_phone.dart';
-import 'package:practice_10/pages/edit_name.dart';
-import 'package:practice_10/pages/edit_image.dart';
-import 'package:practice_10/pages/edit_email.dart';
-import 'package:practice_10/widgets/dispaly_image_widget.dart';
+import 'package:practice_11/authentication/auth_service.dart';
+import 'package:practice_11/pages/edit_phone.dart';
+import 'package:practice_11/pages/edit_name.dart';
+import 'package:practice_11/pages/edit_image.dart';
+import 'package:practice_11/pages/edit_email.dart';
+import 'package:practice_11/widgets/dispaly_image_widget.dart';
 import '../user/user_data.dart';
-import 'package:practice_10/pages/login_page.dart';
+import 'package:practice_11/pages/login_page.dart';
 
 
 class ProfilePage extends StatefulWidget {

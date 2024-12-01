@@ -1,4 +1,4 @@
-import 'package:practice_10/model/coffee.dart';
+import 'package:practice_11/model/coffee.dart';
 class CartItem {
   final Coffee coffee;
   int quantity;

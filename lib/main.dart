@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:practice_10/model/coffee.dart';
-import 'package:practice_10/pages/home_page.dart';
-import 'package:practice_10/pages/second_page.dart';
-import 'package:practice_10/pages/third_page.dart';
+import 'package:practice_11/model/coffee.dart';
+import 'package:practice_11/pages/home_page.dart';
+import 'package:practice_11/pages/second_page.dart';
+import 'package:practice_11/pages/third_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async{

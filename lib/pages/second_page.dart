@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:practice_10/components/item_note.dart';
-import 'package:practice_10/model/coffee.dart';
-import 'package:practice_10/pages/catalog_page.dart';
+import 'package:practice_11/components/item_note.dart';
+import 'package:practice_11/model/coffee.dart';
+import 'package:practice_11/pages/catalog_page.dart';
 
 
 class SecondPage extends StatelessWidget {

@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:practice_10/api_service.dart';
-import 'package:practice_10/components/item_note.dart';
-import 'package:practice_10/model/coffee.dart';
-import 'package:practice_10/pages/basket_page.dart';
-import 'package:practice_10/model/cart_item.dart';
+import 'package:practice_11/api_service.dart';
+import 'package:practice_11/components/item_note.dart';
+import 'package:practice_11/model/coffee.dart';
+import 'package:practice_11/pages/basket_page.dart';
+import 'package:practice_11/model/cart_item.dart';
+
+
 class HomePage extends StatefulWidget {
   final Function(Coffee) onFavouriteToggle;
   final List<Coffee> favouriteCoffee;
 
-  const HomePage({super.key, required this.onFavouriteToggle, required this.favouriteCoffee});
+  const HomePage(
+      {super.key,
+      required this.onFavouriteToggle,
+      required this.favouriteCoffee});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -16,12 +21,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final List<CartItem> cart = [];
-  List<dynamic> coffee = [];
+  List<Coffee> coffee = [];
+  List<Coffee> searchResult = [];
   final ApiService apiService = ApiService();
+  String searchQuery = "";
 
   void addToCart(Coffee coffee) {
     setState(() {
-      final cartItemIndex = cart.indexWhere((item) => item.coffee.id == coffee.id);
+      final cartItemIndex =
+          cart.indexWhere((item) => item.coffee.id == coffee.id);
       if (cartItemIndex != -1) {
         cart[cartItemIndex].quantity++;
       } else {
@@ -29,9 +37,9 @@ class _HomePageState extends State<HomePage> {
       }
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${coffee.title} добавлен в корзину'),)
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('${coffee.title} добавлен в корзину'),
+    ));
   }
 
   Future<void> _addNewNoteDialog(BuildContext context) async {
@@ -63,10 +71,9 @@ class _HomePageState extends State<HomePage> {
               ),
               TextField(
                   decoration: const InputDecoration(labelText: 'Картинка'),
-                  onChanged: (value){
+                  onChanged: (value) {
                     imageUrl = value;
-                  }
-              ),
+                  }),
               TextField(
                 decoration: const InputDecoration(labelText: 'Цена'),
                 onChanged: (value) {
@@ -91,7 +98,10 @@ class _HomePageState extends State<HomePage> {
             TextButton(
               child: const Text('Добавить'),
               onPressed: () async {
-                if (title.isNotEmpty && description.isNotEmpty && cost.isNotEmpty && article.isNotEmpty) {
+                if (title.isNotEmpty &&
+                    description.isNotEmpty &&
+                    cost.isNotEmpty &&
+                    article.isNotEmpty) {
                   Coffee newCoffee = Coffee(
                     coffee.length,
                     title,
@@ -100,16 +110,17 @@ class _HomePageState extends State<HomePage> {
                     cost,
                     article,
                   );
-                  try{
-                    Coffee createdCoffee = await apiService.createCoffee(newCoffee);
+                  try {
+                    Coffee createdCoffee =
+                        await apiService.createCoffee(newCoffee);
                     setState(() {
                       coffee.add(createdCoffee);
                     });
                     Navigator.of(context).pop();
-                  } catch(error){
+                  } catch (error) {
                     print('Ошибка при добавлении кофе: $error');
                   }
-                } else{
+                } else {
                   print('Пожалуйста, заполните все поля.');
                 }
               },
@@ -124,9 +135,24 @@ class _HomePageState extends State<HomePage> {
     final response = await apiService.getCoffees();
     if (response.isNotEmpty) {
       setState(() {
-      coffee = response;
-    });
+        coffee = response;
+        searchResult = response;
+      });
     }
+  }
+  void filterSearchResults(String query) {
+    setState(() {
+      searchQuery = query;
+      if (query.isEmpty) {
+        searchResult = coffee;
+      } else {
+        searchResult = coffee.where((item) {
+          final title = item.title.toLowerCase();
+          final description = item.description.toLowerCase();
+          return title.contains(query.toLowerCase()) || description.contains(query.toLowerCase());
+        }).toList();
+      }
+    });
   }
 
   @override
@@ -146,8 +172,9 @@ class _HomePageState extends State<HomePage> {
       );
     }
   }
-  Future<void> deleteCoffee(int coffeeId, int index) async{
-    try{
+
+  Future<void> deleteCoffee(int coffeeId, int index) async {
+    try {
       await apiService.deleteCoffee(coffeeId);
       setState(() {
         coffee.removeAt(index);
@@ -155,7 +182,7 @@ class _HomePageState extends State<HomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Кофе с ID $coffeeId был удален')),
       );
-    } catch (error){
+    } catch (error) {
       print('Ошибка при удалении кофе: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Ошибка при удалении кофе: $error')),
@@ -181,7 +208,7 @@ class _HomePageState extends State<HomePage> {
           actions: <Widget>[
             TextButton(
               child: const Text('Закрыть'),
-              onPressed: (){
+              onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
@@ -195,49 +222,79 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Кофе'),
-        actions: [
-          Stack(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => BasketPage(cart: cart)),
-                  );
-                },
-              ),
-              if (cart.isNotEmpty)
-                Positioned(
-                  right: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(2),
-                    constraints: const BoxConstraints(
-                      minWidth: 16,
-                      minHeight: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      '${cart.fold<int>(0, (previousValue, item) => previousValue + item.quantity)}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+        toolbarHeight: 100,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Кофе',
+                  style: TextStyle(fontSize: 24),
                 ),
-            ],
-          ),
-        ],
+                Stack(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.shopping_cart),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => BasketPage(cart: cart)),
+                        );
+                      },
+                    ),
+                    if (cart.isNotEmpty)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 16,
+                            minHeight: 16,
+                          ),
+                          child: Text(
+                            '${cart.fold<int>(0, (previousValue, item) => previousValue + item.quantity)}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 40,
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Поиск...',
+                  prefixIcon: Icon(Icons.search),
+                  contentPadding: EdgeInsets.symmetric(vertical: 0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                onChanged: filterSearchResults,
+              ),
+            ),
+          ],
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: coffee.isNotEmpty
+        child: searchResult.isNotEmpty
             ? GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -245,12 +302,14 @@ class _HomePageState extends State<HomePage> {
             crossAxisSpacing: 8.0,
             mainAxisSpacing: 8.0,
           ),
-          itemCount: coffee.length,
+          itemCount: searchResult.length,
           itemBuilder: (BuildContext context, int index) {
-            final Coffee coffeeItem = coffee[index];
-            final isFavourite = widget.favouriteCoffee.contains(coffeeItem);
-            final DismissDirection dismissDirection =
-            index % 2 == 0 ? DismissDirection.endToStart : DismissDirection.startToEnd;
+            final Coffee coffeeItem = searchResult[index];
+            final isFavourite =
+            widget.favouriteCoffee.contains(coffeeItem);
+            final DismissDirection dismissDirection = index % 2 == 0
+                ? DismissDirection.endToStart
+                : DismissDirection.startToEnd;
 
             return Dismissible(
               key: Key(coffeeItem.id.toString()),
@@ -258,6 +317,7 @@ class _HomePageState extends State<HomePage> {
               onDismissed: (direction) {
                 setState(() {
                   coffee.removeAt(index);
+                  searchResult = List.from(coffee);
                 });
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('${coffeeItem.title} был удален')),
@@ -275,7 +335,7 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.white,
                         size: 40,
                       ),
-                      onPressed: () async{
+                      onPressed: () async {
                         await deleteCoffee(coffeeItem.id, index);
                       },
                     ),
@@ -286,7 +346,8 @@ class _HomePageState extends State<HomePage> {
               child: ItemNote(
                 coffee: coffeeItem,
                 isFavourite: isFavourite,
-                onFavouriteToggle: () => widget.onFavouriteToggle(coffeeItem),
+                onFavouriteToggle: () =>
+                    widget.onFavouriteToggle(coffeeItem),
                 onAddToCart: () => addToCart(coffeeItem),
                 onTap: () => fetchCoffeeById(coffeeItem.id),
                 onEdit: () => _editNoteDialog(context, coffeeItem),
@@ -365,7 +426,10 @@ class _HomePageState extends State<HomePage> {
             TextButton(
               child: const Text('Сохранить'),
               onPressed: () async {
-                if (title.isNotEmpty && description.isNotEmpty && cost.isNotEmpty && article.isNotEmpty) {
+                if (title.isNotEmpty &&
+                    description.isNotEmpty &&
+                    cost.isNotEmpty &&
+                    article.isNotEmpty) {
                   Coffee updatedCoffee = Coffee(
                     coffeeItem.id,
                     title,
@@ -375,9 +439,11 @@ class _HomePageState extends State<HomePage> {
                     article,
                   );
                   try {
-                    Coffee result = await apiService.updateCoffee(coffeeItem.id, updatedCoffee);
+                    Coffee result = await apiService.updateCoffee(
+                        coffeeItem.id, updatedCoffee);
                     setState(() {
-                      int index = coffee.indexWhere((c) => c.id == coffeeItem.id);
+                      int index =
+                          coffee.indexWhere((c) => c.id == coffeeItem.id);
                       if (index != -1) {
                         coffee[index] = result;
                       }
@@ -386,7 +452,8 @@ class _HomePageState extends State<HomePage> {
                   } catch (error) {
                     print('Ошибка при обновлении кофе: $error');
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Ошибка при обновлении кофе: $error')),
+                      SnackBar(
+                          content: Text('Ошибка при обновлении кофе: $error')),
                     );
                   }
                 } else {
