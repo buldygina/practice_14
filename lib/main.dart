@@ -1,16 +1,23 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:practice_11/firebase_options.dart';
 import 'package:practice_11/model/coffee.dart';
 import 'package:practice_11/pages/home_page.dart';
+import 'package:practice_11/services/login_or_register.dart';
 import 'package:practice_11/pages/second_page.dart';
 import 'package:practice_11/pages/third_page.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:practice_11/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
-void main() async{
-  await Supabase.initialize(
-    url: "https://rwonqkhzbjwsbxrronhr.supabase.co",
-    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ3b25xa2h6Ymp3c2J4cnJvbmhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE4NjY5MDAsImV4cCI6MjA0NzQ0MjkwMH0.xxUTUBaLnWAD7Fz9R2VQuSkfxL_YyoUDPQ6WNfEeLgQ",
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AuthService(),
+      child: const MyApp(),
+    ),
   );
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -25,12 +32,37 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MyHomePage(),
+      home: const AuthWrapper(),
+    );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
+
+    return StreamBuilder(
+      stream: authService.authStateChanges,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasData) {
+          return const MyHomePage();
+        } else {
+          return const LoginOrRegister();
+        }
+      },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -52,10 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void _addToCart(Coffee coffee) {
     print('Добавлено в корзину: ${coffee.title}');
   }
+
   void _onTap(Coffee coffee) {
     print('Показать детали для: ${coffee.title}');
   }
-
 
   void _onEdit(Coffee coffee) {
     print('Редактирование напитка: ${coffee.title}');

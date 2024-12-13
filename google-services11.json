@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "83999343919",
+    "project_id": "chat-messenger-ada4a",
+    "storage_bucket": "chat-messenger-ada4a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:83999343919:android:d2c60f2202d0c551704dda",
+        "android_client_info": {
+          "package_name": "com.example.practice_11"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcZCp3GhJZeG8JaMOL1r_DfVe82ef1wv8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

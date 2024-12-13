@@ -1,79 +1,112 @@
 import 'package:flutter/material.dart';
-import 'package:practice_11/authentication/auth_service.dart';
-import 'package:practice_11/pages/profile_page.dart';
+import 'package:practice_11/components/my_button.dart';
+import 'package:practice_11/components/my_text_field.dart';
+import 'package:practice_11/services/auth_service.dart';
+import 'package:provider/provider.dart';
+
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+  final void Function()? onTap;
+
+  const RegisterPage({super.key, required this.onTap});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final authService = AuthService();
-
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   void signUp() async {
-    final email = _emailController.text;
-    final password = _passwordController.text;
-    final confirmPassword = _confirmPasswordController.text;
-
-    if (password != confirmPassword) {
+    if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Пароли не совпадают")),
+        const SnackBar(
+          content: Text("Пароли не совпадают!"),
+        ),
       );
       return;
     }
-
+    final authService = Provider.of<AuthService>(context, listen: false);
     try {
-      await authService.signUpWithEmailPassword(email, password);
-      if (mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
-              (route) => false,
-        );
-      }
+      await authService.signUpWithEmailandPassword(
+          emailController.text, passwordController.text);
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Ошибка регистрации: $e")),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString(),
+          ),
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Зарегистрируйтесь"),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 50),
-        children: [
-          TextField(
-            controller: _emailController,
-            decoration: const InputDecoration(labelText: "Почта"),
+      backgroundColor: Colors.grey[300],
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 50),
+                Icon(
+                  Icons.coffee,
+                  size: 100,
+                  color: Colors.grey[800],
+                ),
+                const SizedBox(height: 50),
+                const Text(
+                  'Создайте аккаунт',
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 25),
+                MyTextField(
+                  controller: emailController,
+                  hintText: 'Почта',
+                  obscureText: false,
+                ),
+                const SizedBox(height: 10),
+                MyTextField(
+                  controller: passwordController,
+                  hintText: 'Пароль',
+                  obscureText: true,
+                ),
+                const SizedBox(height: 10),
+                MyTextField(
+                  controller: confirmPasswordController,
+                  hintText: 'Повторите пароль',
+                  obscureText: true,
+                ),
+                const SizedBox(height: 25),
+                MyButton(onTap: signUp, text: 'Зарегистрироваться'),
+                const SizedBox(height: 50),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('У вас есть аккаунт?'),
+                    const SizedBox(width: 4),
+                    GestureDetector(
+                      onTap: widget.onTap,
+                      child: const Text(
+                        'Войдите',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _passwordController,
-            decoration: const InputDecoration(labelText: "Пароль"),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _confirmPasswordController,
-            decoration: const InputDecoration(labelText: "Подтвердите пароль"),
-          ),
-          const SizedBox(height: 12),
-          ElevatedButton(
-            onPressed: signUp,
-            child: const Text("Зарегистрироваться"),
-          ),
-        ],
+        ),
       ),
     );
   }
