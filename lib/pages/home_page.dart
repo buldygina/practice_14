@@ -12,8 +12,8 @@ class HomePage extends StatefulWidget {
 
   const HomePage(
       {super.key,
-      required this.onFavouriteToggle,
-      required this.favouriteCoffee});
+        required this.onFavouriteToggle,
+        required this.favouriteCoffee});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
   void addToCart(Coffee coffee) {
     setState(() {
       final cartItemIndex =
-          cart.indexWhere((item) => item.coffee.id == coffee.id);
+      cart.indexWhere((item) => item.coffee.id == coffee.id);
       if (cartItemIndex != -1) {
         cart[cartItemIndex].quantity++;
       } else {
@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                   );
                   try {
                     Coffee createdCoffee =
-                        await apiService.createCoffee(newCoffee);
+                    await apiService.createCoffee(newCoffee);
                     setState(() {
                       coffee.add(createdCoffee);
                     });
@@ -443,7 +443,7 @@ class _HomePageState extends State<HomePage> {
                         coffeeItem.id, updatedCoffee);
                     setState(() {
                       int index =
-                          coffee.indexWhere((c) => c.id == coffeeItem.id);
+                      coffee.indexWhere((c) => c.id == coffeeItem.id);
                       if (index != -1) {
                         coffee[index] = result;
                       }

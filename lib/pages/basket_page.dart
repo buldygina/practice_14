@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:practice_11/model/cart_item.dart';
+import 'package:practice_11/api_service.dart';
+import '../model/order_create.dart';
 
 class BasketPage extends StatefulWidget {
   final List<CartItem> cart;
@@ -11,6 +14,9 @@ class BasketPage extends StatefulWidget {
 }
 
 class _BasketPageState extends State<BasketPage> {
+  final ApiService apiService = ApiService();
+  bool _isLoading = false;
+
   int calculateTotalPrice() {
     int total = 0;
     for (var item in widget.cart) {
@@ -63,6 +69,14 @@ class _BasketPageState extends State<BasketPage> {
     );
   }
 
+  Future<String> _getUserId() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return user.uid;
+    } else {
+      throw Exception('Пользователь не авторизован');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final totalPrice = calculateTotalPrice();
@@ -127,20 +141,63 @@ class _BasketPageState extends State<BasketPage> {
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Покупка успешно совершена!')),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                minimumSize: const Size(double.infinity, 50),
-                textStyle: const TextStyle(fontSize: 18),
-                backgroundColor: const Color.fromARGB(255, 187, 164, 132),
-                foregroundColor: Colors.white,
-              ),
-              child: Text('Купить за $totalPrice руб.'),
+            child: Column(
+              children: [
+                SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: _isLoading
+                      ? null
+                      : () async {
+                    setState(() {
+                      _isLoading = true;
+                    });
+                    try {
+                      String userId = await _getUserId();
+                      List<int> productIds = widget.cart.map((item) => item.coffee.id).toList();
+                      List<int> quantities = widget.cart.map((item) => item.quantity).toList();
+
+
+                      OrderCreate newOrder = OrderCreate(
+                        customerId: userId,
+                        productIds: productIds,
+                        quantities: quantities,
+                        totalPrice: totalPrice.toDouble(),
+                      );
+
+
+                      await apiService.createOrder(newOrder);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Покупка оформлена!')),
+                      );
+
+                      // Очистка корзины после успешной покупки
+                      setState(() {
+                        widget.cart.clear();
+                      });
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Ошибка при оформлении покупки: $e')),
+                      );
+                    } finally {
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    }
+                  },
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                    'Купить',
+                    style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w500),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 50),
+                      backgroundColor: Color.fromARGB(255, 187, 164, 132),
+                  ),
+                ),
+
+              ],
             ),
           ),
         ],

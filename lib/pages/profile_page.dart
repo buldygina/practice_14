@@ -12,7 +12,7 @@ import 'package:practice_11/widgets/dispaly_image_widget.dart';
 import 'package:provider/provider.dart';
 import '../user/user_data.dart';
 import 'login_page.dart';
-
+import 'package:practice_11/pages/orders_page.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -37,7 +37,6 @@ class _ProfilePageState extends State<ProfilePage> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -99,9 +98,32 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 10),
             Container(
-              height: 400,
+              height: 180,
               child: _buildUserList(),
             ),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const OrdersPage(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.shopping_bag, color: Colors.white),
+              label: const Text(
+                'Мои заказы',
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+              style: ElevatedButton.styleFrom(
+                fixedSize: const Size(350, 50),
+                backgroundColor: Color.fromARGB(255, 187, 164, 132),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+              ),
+            ),
+
           ],
         ),
       ),
