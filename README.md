@@ -6,7 +6,7 @@
 
 1. Для даной работы зарегистрировалась в Rustore
 2. Подготовила всю информацию для публикации приложения
-3. Загрузила apk в формате zip
+3. Загрузила apk
 
 ![image](https://github.com/user-attachments/assets/a1749937-09cf-4396-80a4-f76be329c456)
 
@@ -43,4 +43,4 @@
 
 ![image](https://github.com/user-attachments/assets/fe63c205-094b-408d-befd-8ff4517d8345)
    
-   
+В этой ветке лежит app-release.apk, который можно скачать для тестирования. 
