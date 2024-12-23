@@ -7,7 +7,7 @@ import 'package:practice_11/model/order_create.dart';
 class ApiService {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'http://192.168.1.6:8080',
+      baseUrl: 'https://lisa.pets.sirok.space',
       connectTimeout: Duration(seconds: 50),
       receiveTimeout: Duration(seconds: 50),
     ),
@@ -19,7 +19,7 @@ class ApiService {
   }
   Future<List<Coffee>> getCoffees() async {
     try {
-      final response = await _dio.get('http://192.168.1.6:8080/coffees');
+      final response = await _dio.get('https://lisa.pets.sirok.space/coffees');
       if (response.statusCode == 200) {
         List<Coffee> coffee = (response.data as List)
             .map((coffee) => Coffee.fromJson(coffee))
@@ -35,7 +35,7 @@ class ApiService {
   Future<Coffee> createCoffee(Coffee coffee) async {
     try {
       final response = await _dio.post(
-        'http://192.168.1.6:8080/coffee/create',
+        'https://lisa.pets.sirok.space/coffee/create',
         data: coffee.toJson(),
       );
       if (response.statusCode == 200) {
@@ -49,7 +49,7 @@ class ApiService {
   }
   Future<Coffee> getCoffeeById(int id) async {
     try {
-      final response = await _dio.get('http://192.168.1.6:8080/coffee/$id');
+      final response = await _dio.get('https://lisa.pets.sirok.space/coffee/$id');
       if (response.statusCode == 200) {
         return Coffee.fromJson(response.data);
       } else {
@@ -62,7 +62,7 @@ class ApiService {
   Future<Coffee> updateCoffee(int id, Coffee coffee) async {
     try {
       final response = await _dio.put(
-        'http://192.168.1.6:8080/coffee/update/$id',
+        'https://lisa.pets.sirok.space/coffee/update/$id',
         data: coffee.toJson(),
       );
       if (response.statusCode == 200) {
@@ -76,7 +76,7 @@ class ApiService {
   }
   Future<void> deleteCoffee(int id) async {
     try {
-      final response = await _dio.delete('http://192.168.1.6:8080/coffee/delete/$id');
+      final response = await _dio.delete('https://lisa.pets.sirok.space/coffee/delete/$id');
       if (response.statusCode == 204) {
         print("Coffee with ID $id deleted successfully.");
       } else {
