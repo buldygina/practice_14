@@ -43,4 +43,4 @@
 
 ![image](https://github.com/user-attachments/assets/fe63c205-094b-408d-befd-8ff4517d8345)
    
-В этой ветке лежит app-release.apk, который можно скачать для тестирования. 
+В этой ветке лежит app-release.zip, который можно скачать для тестирования. 
